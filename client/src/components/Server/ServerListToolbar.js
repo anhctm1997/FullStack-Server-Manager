@@ -1,22 +1,43 @@
 import {
+  Autocomplete,
   Button,
   Card,
   CardContent,
+  CircularProgress,
   InputAdornment,
+  Popover,
   SvgIcon,
   TextField,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import useDebounce from "../../hook/useDebounce";
 import { Download as DownloadIcon } from "../../icons/download";
 import { Search as SearchIcon } from "../../icons/search";
+import { findServer } from "../../utils/reducer/ServerSlice";
+import SearchInput from "../SearchInput/SearchInput";
 const ServerListToolbar = (props) => {
+  const dispatch = useDispatch();
+  const [searchValue, setSearchValue] = useState("");
+  const valueRef = useRef("");
   const sm = useMediaQuery((theme) => theme.breakpoints.up("sm"), {
     defaultMatches: true,
     noSsr: false,
   });
+
+  const handleChange = (e) => {
+    setSearchValue(e.target.value);
+    if (searchValue !== "") {
+      console.log(searchValue);
+      dispatch(findServer(searchValue));
+    }
+  };
+
   return (
     <Box {...props}>
       <Box
@@ -46,26 +67,21 @@ const ServerListToolbar = (props) => {
             }
           >
             <Box sx={sm ? { maxWidth: 500, minWidth: 200 } : { minWidth: 200 }}>
-              <TextField
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcon fontSize="small" color="action">
-                        <SearchIcon />
-                      </SvgIcon>
-                    </InputAdornment>
-                  ),
-                }}
-                placeholder="Search product"
-                variant="outlined"
-              />
+              <SearchInput
+                label="Search Server"
+                search={findServer}
+                type="servers"
+              ></SearchInput>
             </Box>
             <Box
               sx={
                 sm
                   ? { m: 1 }
-                  : { display: "flex", justifyContent: "space-between", pt: 2 }
+                  : {
+                      display: "flex",
+                      justifyContent: "space-between",
+                      pt: 2,
+                    }
               }
             >
               <Button
@@ -74,9 +90,11 @@ const ServerListToolbar = (props) => {
               >
                 Export
               </Button>
-              <Button color="primary" variant="contained">
-                Add Servers
-              </Button>
+              <Link to="/servers/add" style={{ textDecoration: "none" }}>
+                <Button color="primary" variant="contained">
+                  Add Servers
+                </Button>
+              </Link>
             </Box>
           </CardContent>
         </Card>

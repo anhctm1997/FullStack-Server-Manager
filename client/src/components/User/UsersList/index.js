@@ -89,7 +89,7 @@ const UsersList = ({ ...props }) => {
 
               <TableBody>
                 {userList.map((customer) => {
-                  const date = new Date(customer.regDate);
+                  const date = new Date(customer.regDate).toDateString();
 
                   return (
                     <TableRow hover key={customer._id}>
@@ -110,9 +110,7 @@ const UsersList = ({ ...props }) => {
                       </TableCell>
                       <TableCell>{customer.name}</TableCell>
                       <TableCell size="small">{customer.email}</TableCell>
-                      <TableCell>
-                        {date.toISOString().substring(0, 10)}
-                      </TableCell>
+                      <TableCell>{date}</TableCell>
                       <TableCell
                         style={{
                           textAlign: "center",

@@ -16,7 +16,15 @@ import { Box } from "@mui/system";
 import { Clock as ClockIcon } from "../../icons/clock";
 import CircleIcon from "@mui/icons-material/Circle";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-const ServerCard = ({ server, ...rest }) => {
+import { useDispatch } from "react-redux";
+// import { deleteServer } from "../../utils/reducer/ServerSlice";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+const ServerCard = ({ server, action, ...rest }) => {
+  const dispatch = useDispatch();
+  const navigator = useNavigate();
+  const updateDate = new Date(server.updateDate).toDateString();
+  const createDate = new Date(server.createDate).toDateString();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -25,6 +33,17 @@ const ServerCard = ({ server, ...rest }) => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleDelete = () => {
+    const res = dispatch(action(server._id));
+    if (res.error) {
+      toast.error(res.payload);
+    } else {
+      toast.success("Successfuly");
+    }
+  };
+  const handleUpdate = () => {
+    navigator("/servers/" + server._id);
   };
   return (
     <Card
@@ -39,8 +58,8 @@ const ServerCard = ({ server, ...rest }) => {
     >
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: "primary" }} aria-label="recipe">
-            R
+          <Avatar sx={{ bgcolor: "blue" }} aria-label="recipe">
+            B
           </Avatar>
         }
         action={
@@ -49,7 +68,7 @@ const ServerCard = ({ server, ...rest }) => {
           </IconButton>
         }
         title={server.name}
-        subheader="September 14, 2016"
+        subheader={createDate}
       />
       <Popover
         id={id}
@@ -65,8 +84,10 @@ const ServerCard = ({ server, ...rest }) => {
           horizontal: "right",
         }}
       >
-        <Button sx={{ p: 2 }}>Edit</Button>
-        <Button color="error" sx={{ p: 2 }}>
+        <Button onClick={handleUpdate} sx={{ p: 2 }}>
+          Edit
+        </Button>
+        <Button onClick={handleDelete} color="error" sx={{ p: 2 }}>
           Delete
         </Button>
       </Popover>
@@ -92,7 +113,11 @@ const ServerCard = ({ server, ...rest }) => {
         ${server.ram} Mb`}
         </Typography>
         <Typography align="left" color="textPrimary" variant="body1">
-          {`Ip address: ${server.ip}`}
+          {`Username: 
+        ${server.username}`}
+        </Typography>
+        <Typography align="left" color="textPrimary" variant="body1">
+          {`Ip address: ${server.host}`}
         </Typography>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
@@ -121,7 +146,7 @@ const ServerCard = ({ server, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              Updated 2hr ago
+              Updated {updateDate}
             </Typography>
           </Grid>
           <Grid

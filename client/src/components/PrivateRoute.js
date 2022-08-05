@@ -8,7 +8,7 @@ const PrivateRoute = ({ children }) => {
     useSelector(({ authData }) => authData.auth) ||
     JSON.parse(localStorage.getItem("user"));
   // console.log(auth);
-  if (!auth) {
+  if (!auth && auth.auth) {
     // not logged in so redirect to login page with the return url
     return <Navigate to="/login" state={{ from: history.location }} />;
   }

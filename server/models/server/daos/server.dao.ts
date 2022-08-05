@@ -20,8 +20,8 @@ class ServersDao {
       type: String,
       require: true,
     },
-    createDate: { type: Date, default: Date.now },
-    updateDate: { type: Date, default: Date.now },
+    createDate: { type: Date, default: Date.now() },
+    updateDate: { type: Date, default: Date.now() },
     status: {
       type: Boolean,
       default: true,
@@ -75,7 +75,7 @@ class ServersDao {
     }
   }
   async getServerById(serverId: string) {
-    return this.Server.findOne({ _id: serverId }).select("-auth").exec();
+    return this.Server.findOne({ _id: serverId }).select("-password").exec();
   }
   async getServers(limit = 25, page = 0) {
     const totalServer = (await this.Server.find()).length;
@@ -115,9 +115,13 @@ class ServersDao {
     serverId: string,
     serverFields: PatchServerDto | PutServerDto
   ) {
+    const serverData = {
+      updateDate: Date.now(),
+      ...serverFields,
+    };
     const existingServer = await this.Server.findOneAndUpdate(
       { _id: serverId },
-      { $set: serverFields },
+      { $set: serverData },
       { new: true }
     ).exec();
     return existingServer;

@@ -32,7 +32,19 @@ export const getUser = createAsyncThunk(
     }
   }
 );
-
+export const findUser = createAsyncThunk(
+  "servers/findUser",
+  async (params, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosClient.get(`/search/users`, {
+        params: { username: params },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.response);
+    }
+  }
+);
 export const addUser = createAsyncThunk(
   "users/addUser",
   async (body, { getState, rejectWithValue }) => {
@@ -41,8 +53,6 @@ export const addUser = createAsyncThunk(
 
       return data;
     } catch (error) {
-      // return custom error message from API if any
-      // console.log(error);
       return rejectWithValue(error.response.data.message);
     }
   }

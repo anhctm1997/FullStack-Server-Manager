@@ -21,7 +21,9 @@ class UsersController {
     req: express.Request<{}, {}, {}, findQuery>,
     res: express.Response
   ) {
-    const listUsers = await usersService.find(req.query);
+    if (!req.query.name)
+      res.status(404).json(messageStatus(404, "Bad request"));
+    const listUsers = await usersService.find(req.query.username, 10, 0);
     res.status(200).json(listUsers);
   }
   async getUserById(req: express.Request, res: express.Response) {
@@ -46,7 +48,7 @@ class UsersController {
       req.body.password = await argon2.hash(req.body.password);
     }
     log(await usersService.putById(req.params.userId, req.body));
-    res.status(204).json(messageStatus(200,"success"));
+    res.status(204).json(messageStatus(200, "success"));
   }
   async removeUser(req: express.Request, res: express.Response) {
     try {

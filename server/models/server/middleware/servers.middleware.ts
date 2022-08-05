@@ -7,14 +7,9 @@ class ServersMiddleware {
     res: express.Response,
     next: express.NextFunction
   ) {
-    if (
-      req.body &&
-      req.body.name &&
-      req.body.host &&
-      req.body.username &&
-      req.body.password &&
-      req.body.cpu
-    ) {
+    console.log(req.body);
+
+    if (req.body && req.body.name && req.body.host && req.body.username) {
       next();
     } else {
       res

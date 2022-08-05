@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosClient from "../axios";
+import axiosClient, { axiosPrivate } from "../axios";
 // import { login, refreshToken } from "../action/AuthAction";
 // import { login, refreshToken } from "./authAction";
 
@@ -10,7 +10,7 @@ export const login = createAsyncThunk(
   `${modulePrefix}/login`,
   async (data, { rejectWithValue }) => {
     try {
-      const res = await axiosClient.post("/auth/login", data);
+      const res = await axiosPrivate.post("/auth/login", data);
       localStorage.setItem("accessToken", res.data.accessToken);
       localStorage.setItem("refreshToken", res.data.refreshToken);
       localStorage.setItem("user", JSON.stringify(res.data));
@@ -24,23 +24,21 @@ export const login = createAsyncThunk(
 
 export const refreshToken = createAsyncThunk(
   `${modulePrefix}/refreshToken`,
-  async (_, { getState, rejectWithValue }) => {
+  async ({ accessToken, refreshToken }, { getState, rejectWithValue }) => {
     try {
-      const auth = JSON.parse(localStorage.getItem("auth"));
       const state = getState();
-      const res = await axiosClient.post("/auth/refresh-token", {
-        accessToken: auth.accessToken,
-        refreshToken: auth.refreshToken,
+      const res = await axiosPrivate.post("/auth/refresh-token", {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
       });
       const newAuth = {
         ...state.authData.auth,
         accessToken: res.data.accessToken,
         refreshToken: res.data.refreshToken,
       };
-      //   console.log(newAuth);
       return newAuth;
     } catch (error) {
-      rejectWithValue(error.message);
+      rejectWithValue(error.response.data.message);
     }
   }
 );
@@ -57,7 +55,7 @@ export const registerUser = createAsyncThunk(
       if (error.response && error.response.data.response) {
         return rejectWithValue(error.response.data.response);
       } else {
-        return rejectWithValue(error.message);
+        return rejectWithValue(error.response.data.message);
       }
     }
   }
@@ -108,7 +106,11 @@ const authSlice = createSlice({
     },
     [refreshToken.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      localStorage.setItem("auth", JSON.stringify(payload));
+      localStorage.setItem("accessToken", JSON.stringify(payload.accessToken));
+      localStorage.setItem(
+        "refreshToken",
+        JSON.stringify(payload.refreshToken)
+      );
       state.auth = payload;
       state.username = payload.username;
       state.isAdmin = payload.isAdmin;

@@ -13,8 +13,9 @@ import {
 import { Search as SearchIcon } from "../../icons/search";
 import { Download as DownloadIcon } from "../../icons/download";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsersList } from "../../utils/reducer/UserSlice";
+import { fetchUsersList, findUser } from "../../utils/reducer/UserSlice";
 import { toast } from "react-toastify";
+import SearchInput from "../SearchInput/SearchInput";
 
 const headers = [
   { label: "ID", key: "_id" },
@@ -69,20 +70,11 @@ const UserToolbar = (props) => {
             }
           >
             <Box sx={sm ? { maxWidth: 500, minWidth: 200 } : { minWidth: 200 }}>
-              <TextField
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcon color="action" fontSize="small">
-                        <SearchIcon />
-                      </SvgIcon>
-                    </InputAdornment>
-                  ),
-                }}
-                placeholder="Search customer"
-                variant="outlined"
-              />
+              <SearchInput
+                label="Search User"
+                search={findUser}
+                type="users"
+              ></SearchInput>
             </Box>
             <Box
               sx={

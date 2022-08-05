@@ -25,7 +25,7 @@ export class UserRoutes extends CommonRoutesConfig {
         UsersController.createUser
       );
     this.app
-      .route(`/users/find`)
+      .route(`/search/users`)
       .all(jwtMiddlewares.validJWTNeeded, authMiddlewares.validateIsAdmin)
       .get(
         jwtMiddlewares.validJWTNeeded,

@@ -32,7 +32,20 @@ export const getServer = createAsyncThunk(
     }
   }
 );
-
+export const findServer = createAsyncThunk(
+  "servers/findServer",
+  async (params, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosClient.get(`/search/servers`, {
+        params: { name: params },
+      });
+      console.log(data);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.response);
+    }
+  }
+);
 export const addServer = createAsyncThunk(
   "servers/addServer",
   async (body, { getState, rejectWithValue }) => {
@@ -50,8 +63,9 @@ export const addServer = createAsyncThunk(
 
 export const updateServer = createAsyncThunk(
   "servers/updateServer",
-  async ({ id, data }, { getState, rejectWithValue }) => {
+  async ({ id, data }, { rejectWithValue }) => {
     try {
+      console.log(data);
       const res = await axiosClient.put(`/servers/${id}`, data);
       return res.data;
     } catch (error) {
@@ -77,6 +91,7 @@ const initialState = {
   loading: false,
   serverInfo: {},
   serverList: [],
+  findServerList: [],
   meta: { totalCount: null, totalPage: null },
   error: null,
   success: false,
@@ -102,6 +117,21 @@ const serverSlice = createSlice({
       state.error = payload;
       state.success = true;
     },
+    // [findServer.pending](state) {
+    //   state.loading = true;
+    //   state.error = false;
+    //   state.success = false;
+    // },
+    // [findServer.fulfilled](state, { payload }) {
+    //   state.loading = false;
+    //   // state.findServerList = payload.data;
+    //   state.success = true;
+    // },
+    // [findServer.rejected](state, { payload }) {
+    //   state.loading = false;
+    //   state.error = payload;
+    //   state.success = true;
+    // },
     [addServer.pending](state) {
       state.loading = true;
       state.error = null;
@@ -109,9 +139,23 @@ const serverSlice = createSlice({
     [addServer.fulfilled](state, { payload }) {
       state.loading = false;
       state.serverInfo = payload;
-      state.userList.push(payload);
+      state.serverList.push(payload);
     },
     [addServer.rejected](state, { payload }) {
+      state.loading = false;
+      state.error = payload;
+    },
+    [updateServer.pending](state) {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateServer.fulfilled](state, { payload }) {
+      state.loading = false;
+      console.log(payload);
+      state.serverInfo = payload;
+      state.success = true;
+    },
+    [updateServer.rejected](state, { payload }) {
       state.loading = false;
       state.error = payload;
     },
@@ -121,7 +165,7 @@ const serverSlice = createSlice({
     },
     [getServer.fulfilled](state, { payload }) {
       state.loading = false;
-      state.userInfo = payload;
+      state.serverInfo = payload;
       state.success = true;
     },
     [getServer.rejected](state, { payload }) {

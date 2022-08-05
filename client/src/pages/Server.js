@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import ServerCard from "../components/Server/ServerCard";
 import ServerListToolbar from "../components/Server/ServerListToolbar";
-import { fetchServersList } from "../utils/reducer/ServerSlice";
+import { deleteServer, fetchServersList } from "../utils/reducer/ServerSlice";
 
 const Server = () => {
   const dispatch = useDispatch();
@@ -20,14 +20,16 @@ const Server = () => {
   const [page, setPage] = useState(1);
   useEffect(() => {
     const fetchData = async () => {
-      const res = await dispatch(fetchServersList({ limit: 4, page }));
+      const res = await dispatch(fetchServersList({ limit: 6, page: page }));
       if (res.error) {
         toast.error(res.payload);
       }
     };
     fetchData();
-  }, [dispatch]);
-
+  }, [dispatch, page]);
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
   return (
     <Box
       component="main"
@@ -43,7 +45,7 @@ const Server = () => {
             <Grid container spacing={3}>
               {serverList.map((server) => (
                 <Grid item key={server._id} lg={4} md={6} xs={12}>
-                  <ServerCard server={server} />
+                  <ServerCard server={server} action={deleteServer} />
                 </Grid>
               ))}
             </Grid>
@@ -67,7 +69,15 @@ const Server = () => {
             pt: 3,
           }}
         >
-          <Pagination color="primary" count={meta.totalPage} size="small" />
+          {success && (
+            <Pagination
+              color="primary"
+              count={meta.totalPage}
+              page={page}
+              size="small"
+              onChange={handleChange}
+            />
+          )}
         </Box>
       </Container>
     </Box>

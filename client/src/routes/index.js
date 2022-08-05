@@ -3,6 +3,7 @@ import Account from "../pages/Account";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Server from "../pages/Server";
+import ServerInfo from "../pages/ServerInfo";
 import Setting from "../pages/Setting";
 import UserInfo from "../pages/UserInfo";
 import Users from "../pages/Users";
@@ -14,6 +15,7 @@ export const publicRoutes = [
   { path: "/login", component: Login, layout: null },
   { path: "/account", component: Account },
   { path: "/servers", component: Server },
+  { path: "/servers/:id", component: ServerInfo },
   { path: "/settings", component: Setting },
   { path: "/error", component: NotFound, layout: null },
 ];

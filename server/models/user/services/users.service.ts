@@ -15,8 +15,8 @@ class UsersService implements CRUD {
   async list(limit, page) {
     return UsersDao.getUsers(limit, page);
   }
-  async find(query) {
-    return UsersDao.getUserByQuery(query);
+  async find(query: any, limit: number, page: number) {
+    return UsersDao.findUsers(query, limit, page);
   }
   async patchById(id: string, resource: PatchUserDto): Promise<any> {
     return UsersDao.updateUserById(id, resource);

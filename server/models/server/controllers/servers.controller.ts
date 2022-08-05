@@ -8,10 +8,15 @@ const log: debug.IDebugger = debug("app:users-controller");
 
 class ServersController {
   async listServers(req: express.Request, res: express.Response) {
-    const listServers = await serversService.list(10, 0);
+    const listServers = await serversService.list(
+      req.query.limit,
+      req.query.page
+    );
     res.status(200).json(listServers);
   }
   async findListServers(req: express.Request, res: express.Response) {
+    if (!req.query.name)
+      res.status(404).json(messageStatus(400, "Bad Request"));
     const listServers = await serversService.find(req.query.name, 10, 0);
     res.status(200).json(listServers);
   }
@@ -28,7 +33,7 @@ class ServersController {
     res.status(204).json(messageStatus(200));
   }
   async put(req: express.Request, res: express.Response) {
-    log(await serversService.putById(req.params.userId, req.body));
+    log(await serversService.putById(req.params.serverId, req.body));
     res.status(204).json(messageStatus(200));
   }
   async removeServer(req: express.Request, res: express.Response) {

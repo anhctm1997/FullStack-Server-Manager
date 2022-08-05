@@ -44,16 +44,23 @@ class UsersDao {
     await this.User.deleteOne({ _id: userId }).exec();
     return userId;
   }
-  async getUserByQuery(query: {
-    name: string;
-    username?: string;
-    isAdmin?: number;
-  }) {
-    return this.User.find({
-      name: query.name,
-      username: query.username,
-      isAdmin: query.isAdmin,
-    });
+  async findUsers(query, limit = 25, page = 0) {
+    const skip = limit * (page - 1) < 0 ? 0 : limit * (page - 1);
+    const listUsers = await this.User.find({
+      username: { $regex: query, $options: "i" },
+    })
+      .select("-password")
+      .limit(limit)
+      .exec();
+    const totalUser = listUsers.length;
+    const totalPage = totalUser / limit;
+    return {
+      meta: {
+        totalCount: totalUser,
+        totalPage: Math.ceil(totalPage),
+      },
+      data: listUsers,
+    };
   }
   async getUserById(userId: string) {
     return this.User.findOne({ _id: userId }).populate("username").exec();

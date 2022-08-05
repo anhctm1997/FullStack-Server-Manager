@@ -11,7 +11,7 @@ class ServersService implements CRUD {
   async deleteById(id: string) {
     return ServersDao.removeServerById(id);
   }
-  async list(limit: number, page: number) {
+  async list(limit: any, page: any) {
     return ServersDao.getServers(limit, page);
   }
   async find(query: any, limit: number, page: number) {
