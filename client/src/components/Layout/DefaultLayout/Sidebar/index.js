@@ -104,15 +104,20 @@ const Sidebar = (props) => {
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
-          {items.map((item) => (
-            <SideBarItem
-              key={item.title}
-              icon={item.icon}
-              href={item.href}
-              title={item.title}
-              onClick={onClose}
-            />
-          ))}
+          {items
+            .filter((item) => {
+              if (isAdmin !== 1) return item.href !== "/users";
+              return item;
+            })
+            .map((item) => (
+              <SideBarItem
+                key={item.title}
+                icon={item.icon}
+                href={item.href}
+                title={item.title}
+                onClick={onClose}
+              />
+            ))}
         </Box>
         <Divider sx={{ borderColor: "#2D3748" }} />
         <Box

@@ -41,7 +41,7 @@ const Login = () => {
         toast.error(res.payload);
       } else {
         toast.success("Successfuly");
-        navigate("/users");
+        navigate("/");
       }
     },
   });

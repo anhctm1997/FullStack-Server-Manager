@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
-const SearchInput = (props) => {
+const SearchInput = ({ search, type }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  console.log(type);
   const [list, setList] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   useEffect(() => {
@@ -15,7 +15,7 @@ const SearchInput = (props) => {
     }
     console.log(list);
     const fecth = async () => {
-      const res = await dispatch(props.search(searchValue));
+      const res = await dispatch(search(searchValue));
       if (!res.error) setList(res.payload.data);
     };
     fecth();
@@ -26,7 +26,7 @@ const SearchInput = (props) => {
       options={list}
       inputValue={searchValue}
       getOptionLabel={(option) =>
-        props.type === "servers" ? option.name : option.username
+        type === "servers" ? option.name : option.username
       }
       onChange={(e, v) => setSearchValue(v)}
       style={{ width: 300 }}
@@ -36,9 +36,9 @@ const SearchInput = (props) => {
           <Button
             fullWidth
             color="primary"
-            onClick={() => navigate(`/${props.type}/${option._id}`)}
+            onClick={() => navigate(`/${type}/${option._id}`)}
           >
-            {props.type === "servers" ? option.name : option.username}
+            {type === "servers" ? option.name : option.username}
           </Button>
         </Box>
       )}

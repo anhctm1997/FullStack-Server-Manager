@@ -69,7 +69,7 @@ const Server = () => {
             pt: 3,
           }}
         >
-          {success && (
+          {success ? (
             <Pagination
               color="primary"
               count={meta.totalPage}
@@ -77,6 +77,17 @@ const Server = () => {
               size="small"
               onChange={handleChange}
             />
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                p: 2,
+              }}
+            >
+              <CircularProgress size={50} />
+            </Box>
           )}
         </Box>
       </Container>
